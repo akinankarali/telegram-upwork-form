@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Upwork Feed Builder</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', sans-serif; box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 16px;
+      background-color: #0e0e10;
+      color: #fff;
+      min-height: 100vh;
+    }
+    h2 { margin-bottom: 16px; }
+    label { display: block; margin-top: 12px; margin-bottom: 4px; font-weight: bold; }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+    }
+    input, select {
+      background-color: #1e1e22;
+      color: #fff;
+    }
+    button.submit {
+      background-color: #4caf50;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button.submit:hover { background-color: #45a049; }
+  </style>
+</head>
+<body>
+  <h2>✨ Create Your Upwork Feed</h2>
+
+  <label for="query">Search Term</label>
+  <input type="text" id="query" placeholder="e.g. python, react" required />
+
+  <label for="experience">Experience Level</label>
+  <select id="experience">
+    <option value="">Any</option>
+    <option value="entry_level">Entry Level</option>
+    <option value="intermediate">Intermediate</option>
+    <option value="expert">Expert</option>
+  </select>
+
+  <label for="job_type">Job Type</label>
+  <select id="job_type">
+    <option value="">Any</option>
+    <option value="hourly">Hourly</option>
+    <option value="fixed-price">Fixed Price</option>
+  </select>
+
+  <label for="rate_min">Minimum Hourly Rate</label>
+  <input type="number" id="rate_min" placeholder="e.g. 20" />
+
+  <label for="rate_max">Maximum Hourly Rate</label>
+  <input type="number" id="rate_max" placeholder="e.g. 100" />
+
+  <label for="duration">Project Duration</label>
+  <select id="duration">
+    <option value="">Any</option>
+    <option value="week">Less than 1 week</option>
+    <option value="month">1 to 3 months</option>
+    <option value="ongoing">Ongoing</option>
+  </select>
+
+  <label for="workload">Workload</label>
+  <select id="workload">
+    <option value="">Any</option>
+    <option value="as_needed">Less than 30 hrs/week</option>
+    <option value="full_time">More than 30 hrs/week</option>
+  </select>
+
+  <label for="client_hires">Client Hire History</label>
+  <select id="client_hires">
+    <option value="">Any</option>
+    <option value="0">No hires</option>
+    <option value="1-9">1 to 9 hires</option>
+    <option value="10plus">10+ hires</option>
+  </select>
+
+  <label for="contract_to_hire">Contract to Hire</label>
+  <select id="contract_to_hire">
+    <option value="">Any</option>
+    <option value="true">Yes</option>
+    <option value="false">No</option>
+  </select>
+
+  <button class="submit" onclick="submitForm()">✨ Save Feed</button>
+
+  <script>
+    Telegram.WebApp.ready();
+
+    function submitForm() {
+      const data = {
+        query: document.getElementById("query").value,
+        experience: document.getElementById("experience").value,
+        job_type: document.getElementById("job_type").value,
+        rate_min: document.getElementById("rate_min").value,
+        rate_max: document.getElementById("rate_max").value,
+        duration: document.getElementById("duration").value,
+        workload: document.getElementById("workload").value,
+        client_hires: document.getElementById("client_hires").value,
+        contract_to_hire: document.getElementById("contract_to_hire").value
+      };
+
+      Telegram.WebApp.sendData(JSON.stringify(data));
+      Telegram.WebApp.close();
+    }
+  </script>
+</body>
+</html>
