@@ -115,6 +115,7 @@
 
     function submitForm() {
       const queryValue = document.getElementById("query").value.trim();
+      alert("Lütfen en az bir arama terimi girin!", queryValue);
       if (!queryValue) {
         alert("Lütfen en az bir arama terimi girin!");
         return;
