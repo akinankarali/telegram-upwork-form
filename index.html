@@ -36,139 +36,117 @@
       cursor: pointer;
     }
     button.submit:hover { background-color: #45a049; }
+    #debug { margin-top: 20px; background: #333; padding: 10px; display: none; }
   </style>
 </head>
 <body>
   <h2>✨ Upwork Feed Oluştur</h2>
 
-  <form id="feedForm">
-    <label for="query">Arama Terimi</label>
-    <input type="text" id="query" placeholder="örn. python, react" required />
+  <label for="query">Arama Terimi</label>
+  <input type="text" id="query" placeholder="örn. python, react" required />
 
-    <label for="experience">Deneyim Seviyesi</label>
-    <select id="experience">
-      <option value="Any">Herhangi biri</option>
-      <option value="entry_level">Entry Level</option>
-      <option value="intermediate">Intermediate</option>
-      <option value="expert">Expert</option>
-    </select>
+  <label for="experience">Deneyim Seviyesi</label>
+  <select id="experience">
+    <option value="Any">Herhangi biri</option>
+    <option value="entry_level">Entry Level</option>
+    <option value="intermediate">Intermediate</option>
+    <option value="expert">Expert</option>
+  </select>
 
-    <label for="job_type">İş Türü</label>
-    <select id="job_type">
-      <option value="Any">Herhangi biri</option>
-      <option value="hourly">Saatlik</option>
-      <option value="fixed-price">Sabit Fiyat</option>
-    </select>
+  <label for="job_type">İş Türü</label>
+  <select id="job_type">
+    <option value="Any">Herhangi biri</option>
+    <option value="hourly">Saatlik</option>
+    <option value="fixed-price">Sabit Fiyat</option>
+  </select>
 
-    <label for="rate_min">Minimum Saatlik Ücret</label>
-    <input type="number" id="rate_min" placeholder="örn. 20" />
+  <label for="rate_min">Minimum Saatlik Ücret</label>
+  <input type="number" id="rate_min" placeholder="örn. 20" />
 
-    <label for="rate_max">Maksimum Saatlik Ücret</label>
-    <input type="number" id="rate_max" placeholder="örn. 100" />
+  <label for="rate_max">Maksimum Saatlik Ücret</label>
+  <input type="number" id="rate_max" placeholder="örn. 100" />
 
-    <label for="duration">Proje Süresi</label>
-    <select id="duration">
-      <option value="Any">Herhangi biri</option>
-      <option value="week">1 haftadan az</option>
-      <option value="month">1-3 ay</option>
-      <option value="ongoing">Sürekli</option>
-    </select>
+  <label for="duration">Proje Süresi</label>
+  <select id="duration">
+    <option value="Any">Herhangi biri</option>
+    <option value="week">1 haftadan az</option>
+    <option value="month">1-3 ay</option>
+    <option value="ongoing">Sürekli</option>
+  </select>
 
-    <label for="workload">İş Yükü</label>
-    <select id="workload">
-      <option value="Any">Herhangi biri</option>
-      <option value="as_needed">30 saat/haftadan az</option>
-      <option value="full_time">30 saat/haftadan fazla</option>
-    </select>
+  <label for="workload">İş Yükü</label>
+  <select id="workload">
+    <option value="Any">Herhangi biri</option>
+    <option value="as_needed">30 saat/haftadan az</option>
+    <option value="full_time">30 saat/haftadan fazla</option>
+  </select>
 
-    <label for="client_hires">Müşteri İşe Alım Geçmişi</label>
-    <select id="client_hires">
-      <option value="Any">Herhangi biri</option>
-      <option value="0">Hiç işe alım yok</option>
-      <option value="1-9">1-9 işe alım</option>
-      <option value="10plus">10+ işe alım</option>
-    </select>
+  <label for="client_hires">Müşteri İşe Alım Geçmişi</label>
+  <select id="client_hires">
+    <option value="Any">Herhangi biri</option>
+    <option value="0">Hiç işe alım yok</option>
+    <option value="1-9">1-9 işe alım</option>
+    <option value="10plus">10+ işe alım</option>
+  </select>
 
-    <label for="contract_to_hire">Sözleşmeden İşe Alıma</label>
-    <select id="contract_to_hire">
-      <option value="Any">Herhangi biri</option>
-      <option value="true">Evet</option>
-      <option value="false">Hayır</option>
-    </select>
+  <label for="contract_to_hire">Sözleşmeden İşe Alıma</label>
+  <select id="contract_to_hire">
+    <option value="Any">Herhangi biri</option>
+    <option value="true">Evet</option>
+    <option value="false">Hayır</option>
+  </select>
 
-    <button type="button" class="submit" id="saveButton">✨ Feed Kaydet</button>
-  </form>
+  <button class="submit" onclick="submitForm()">✨ Feed Kaydet</button>
+  
+  <div id="debug"></div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const tg = window.Telegram.WebApp;
-      tg.expand();
-      tg.ready();
-      
-      // Main button'u yapılandır
-      tg.MainButton.setText('Feed Kaydet');
-      tg.MainButton.onClick(function() {
-        saveForm();
-      });
-      
-      // Save button handler
-      document.getElementById('saveButton').addEventListener('click', function() {
-        saveForm();
-      });
-      
-      function saveForm() {
-        const searchTerm = document.getElementById('query').value.trim();
-        if (!searchTerm) {
-          alert('Lütfen en az bir arama terimi girin');
-          return;
-        }
-        
-        const data = {
-          searchTerm: searchTerm,
-          experienceLevel: document.getElementById('experience').value,
-          jobType: document.getElementById('job_type').value,
-          minRate: document.getElementById('rate_min').value || null,
-          maxRate: document.getElementById('rate_max').value || null,
-          duration: document.getElementById('duration').value,
-          workload: document.getElementById('workload').value,
-          clientHistory: document.getElementById('client_hires').value,
-          contractToHire: document.getElementById('contract_to_hire').value
-        };
-        
-        // Convert data to JSON string
-        const jsonData = JSON.stringify(data);
-        
-        // Try using tg.sendData
-        try {
-          if (tg && typeof tg.sendData === 'function') {
-            tg.sendData(jsonData);
-            console.log("Data sent using tg.sendData:", jsonData);
-            setTimeout(() => tg.close(), 500);
-          } else {
-            throw new Error("tg.sendData function not available");
-          }
-        } catch (err) {
-          console.error("Error sending data:", err);
-          
-          // Fallback to alternative method
-          try {
-            if (window.parent && window.parent !== window) {
-              window.parent.postMessage({
-                eventType: 'web_app_data_send',
-                eventData: jsonData
-              }, '*');
-              console.log("Data sent using postMessage fallback");
-              setTimeout(() => tg.close(), 500);
-            } else {
-              throw new Error("window.parent not available");
-            }
-          } catch (err2) {
-            console.error("Error using fallback method:", err2);
-            alert("Veriler gönderilemedi. Lütfen tekrar deneyin.");
-          }
-        }
+    // Telegram WebApp başlatma
+    let tg = window.Telegram.WebApp;
+    tg.expand();
+    tg.ready();
+    
+    const debug = document.getElementById('debug');
+    
+    function showDebug(msg) {
+      debug.style.display = 'block';
+      debug.textContent += msg + '\n';
+    }
+
+    function submitForm() {
+      const queryValue = document.getElementById("query").value.trim();
+      if (!queryValue) {
+        alert("Lütfen en az bir arama terimi girin!");
+        return;
       }
-    });
+      
+      const data = {
+        searchTerm: queryValue, // "query" yerine "searchTerm" kullanıyoruz
+        experienceLevel: document.getElementById("experience").value,
+        jobType: document.getElementById("job_type").value,
+        minRate: document.getElementById("rate_min").value || null,
+        maxRate: document.getElementById("rate_max").value || null,
+        duration: document.getElementById("duration").value,
+        workload: document.getElementById("workload").value,
+        clientHistory: document.getElementById("client_hires").value,
+        contractToHire: document.getElementById("contract_to_hire").value
+      };
+      
+      showDebug("Sending data: " + JSON.stringify(data));
+
+      try {
+        tg.sendData(JSON.stringify(data));
+        showDebug("Data sent successfully");
+        
+        // 1 saniye sonra kapat
+        setTimeout(() => {
+          tg.close();
+        }, 1000);
+      } catch (error) {
+        showDebug("Error: " + error.message);
+        alert("Hata: " + error.message);
+      }
+    }
   </script>
 </body>
 </html>
