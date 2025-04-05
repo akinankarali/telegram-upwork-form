@@ -111,11 +111,10 @@
   <div id="debug">Debugging bilgileri burada görünecek...</div>
 
   <script>
-    // Telegram WebApp başlatma
     let tg = window.Telegram.WebApp;
     tg.expand();
     tg.ready();
-    
+
     const debug = document.getElementById('debug');
     
     function showDebug(msg) {
@@ -123,23 +122,19 @@
       debug.innerHTML += `[${now}] ${msg}\n`;
       debug.scrollTop = debug.scrollHeight;
     }
-    
-    // Telegram WebApp bilgilerini göster
+
     showDebug("Telegram WebApp Bilgileri:");
     showDebug(`Platform: ${tg.platform}`);
     showDebug(`Version: ${tg.version}`);
     showDebug(`InitData: ${tg.initData ? 'Mevcut' : 'Yok'}`);
     showDebug(`ColorScheme: ${tg.colorScheme}`);
     
-    // Sayfa yüklendiğinde tüm form elemanlarını test et ve göster
     document.addEventListener('DOMContentLoaded', function() {
       showDebug("Sayfa yüklendi, form elemanları kontrol ediliyor...");
-      
       const formElements = [
         'query', 'experience', 'job_type', 'rate_min', 'rate_max',
         'duration', 'workload', 'client_hires', 'contract_to_hire'
       ];
-      
       formElements.forEach(id => {
         const element = document.getElementById(id);
         if (element) {
@@ -152,21 +147,25 @@
 
     function submitForm() {
       showDebug("submitForm() çağrıldı");
+
       const queryInput = document.getElementById("query");
-      showDebug(`Query input element: ${queryInput ? 'Bulundu' : 'Bulunamadı'}`);
-      
-      const queryValue = queryInput ? queryInput.value.trim() : 'null';
-      showDebug(`Arama terimi: "${queryValue}"`);
-      
-      if (!queryValue) {
+      const rawQuery = queryInput ? queryInput.value.trim() : '';
+      const queryArray = rawQuery
+        .split(',')
+        .map(term => term.trim())
+        .filter(term => term.length > 0);
+
+      showDebug(`Arama terimleri (dizi): ${JSON.stringify(queryArray)}`);
+
+      if (queryArray.length === 0) {
         showDebug("HATA: Arama terimi boş!");
         alert("Lütfen en az bir arama terimi girin!");
         return;
       }
-      
+
       try {
         const data = {
-          searchTerm: queryValue,
+          searchTerm: queryArray,
           experienceLevel: document.getElementById("experience").value,
           jobType: document.getElementById("job_type").value,
           minRate: document.getElementById("rate_min").value || null,
@@ -176,14 +175,13 @@
           clientHistory: document.getElementById("client_hires").value,
           contractToHire: document.getElementById("contract_to_hire").value
         };
-        
+
         showDebug(`Hazırlanan veri: ${JSON.stringify(data)}`);
-  
+
         try {
           showDebug("tg.sendData() çağrılıyor...");
           tg.sendData(JSON.stringify(data));
           showDebug("✅ Veri başarıyla gönderildi");
-          
           showDebug("1 saniye içinde kapatılacak...");
           setTimeout(() => {
             showDebug("WebApp kapatılıyor...");
