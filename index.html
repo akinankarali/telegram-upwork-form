@@ -36,7 +36,17 @@
       cursor: pointer;
     }
     button.submit:hover { background-color: #45a049; }
-    #debug { margin-top: 20px; background: #333; padding: 10px; display: none; }
+    #debug { 
+      margin-top: 20px; 
+      background: #333; 
+      padding: 10px; 
+      display: block; 
+      white-space: pre-wrap;
+      font-family: monospace;
+      font-size: 12px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
   </style>
 </head>
 <body>
@@ -98,7 +108,7 @@
 
   <button class="submit" onclick="submitForm()">✨ Feed Kaydet</button>
   
-  <div id="debug"></div>
+  <div id="debug">Debugging bilgileri burada görünecek...</div>
 
   <script>
     // Telegram WebApp başlatma
@@ -109,43 +119,83 @@
     const debug = document.getElementById('debug');
     
     function showDebug(msg) {
-      debug.style.display = 'block';
-      debug.textContent += msg + '\n';
+      let now = new Date().toISOString().substring(11, 19);
+      debug.innerHTML += `[${now}] ${msg}\n`;
+      debug.scrollTop = debug.scrollHeight;
     }
+    
+    // Telegram WebApp bilgilerini göster
+    showDebug("Telegram WebApp Bilgileri:");
+    showDebug(`Platform: ${tg.platform}`);
+    showDebug(`Version: ${tg.version}`);
+    showDebug(`InitData: ${tg.initData ? 'Mevcut' : 'Yok'}`);
+    showDebug(`ColorScheme: ${tg.colorScheme}`);
+    
+    // Sayfa yüklendiğinde tüm form elemanlarını test et ve göster
+    document.addEventListener('DOMContentLoaded', function() {
+      showDebug("Sayfa yüklendi, form elemanları kontrol ediliyor...");
+      
+      const formElements = [
+        'query', 'experience', 'job_type', 'rate_min', 'rate_max',
+        'duration', 'workload', 'client_hires', 'contract_to_hire'
+      ];
+      
+      formElements.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+          showDebug(`Element bulundu: ${id}`);
+        } else {
+          showDebug(`HATA: Element bulunamadı: ${id}`);
+        }
+      });
+    });
 
     function submitForm() {
-      const queryValue = document.getElementById("query").value.trim();
-      alert("value" + queryValue);
+      showDebug("submitForm() çağrıldı");
+      const queryInput = document.getElementById("query");
+      showDebug(`Query input element: ${queryInput ? 'Bulundu' : 'Bulunamadı'}`);
+      
+      const queryValue = queryInput ? queryInput.value.trim() : 'null';
+      showDebug(`Arama terimi: "${queryValue}"`);
+      
       if (!queryValue) {
+        showDebug("HATA: Arama terimi boş!");
         alert("Lütfen en az bir arama terimi girin!");
         return;
       }
       
-      const data = {
-        searchTerm: queryValue, // "query" yerine "searchTerm" kullanıyoruz
-        experienceLevel: document.getElementById("experience").value,
-        jobType: document.getElementById("job_type").value,
-        minRate: document.getElementById("rate_min").value || null,
-        maxRate: document.getElementById("rate_max").value || null,
-        duration: document.getElementById("duration").value,
-        workload: document.getElementById("workload").value,
-        clientHistory: document.getElementById("client_hires").value,
-        contractToHire: document.getElementById("contract_to_hire").value
-      };
-      
-      showDebug("Sending data: " + JSON.stringify(data));
-
       try {
-        tg.sendData(JSON.stringify(data));
-        showDebug("Data sent successfully");
+        const data = {
+          searchTerm: queryValue,
+          experienceLevel: document.getElementById("experience").value,
+          jobType: document.getElementById("job_type").value,
+          minRate: document.getElementById("rate_min").value || null,
+          maxRate: document.getElementById("rate_max").value || null,
+          duration: document.getElementById("duration").value,
+          workload: document.getElementById("workload").value,
+          clientHistory: document.getElementById("client_hires").value,
+          contractToHire: document.getElementById("contract_to_hire").value
+        };
         
-        // 1 saniye sonra kapat
-        setTimeout(() => {
-          tg.close();
-        }, 1000);
+        showDebug(`Hazırlanan veri: ${JSON.stringify(data)}`);
+  
+        try {
+          showDebug("tg.sendData() çağrılıyor...");
+          tg.sendData(JSON.stringify(data));
+          showDebug("✅ Veri başarıyla gönderildi");
+          
+          showDebug("1 saniye içinde kapatılacak...");
+          setTimeout(() => {
+            showDebug("WebApp kapatılıyor...");
+            tg.close();
+          }, 1000);
+        } catch (error) {
+          showDebug(`❌ Telegram veri gönderme hatası: ${error.message}`);
+          alert(`Hata: ${error.message}`);
+        }
       } catch (error) {
-        showDebug("Error: " + error.message);
-        alert("Hata: " + error.message);
+        showDebug(`❌ Form işleme hatası: ${error.message}`);
+        alert(`Form işlenirken hata oluştu: ${error.message}`);
       }
     }
   </script>
