@@ -54,161 +54,96 @@
       button.submit:hover {
         background-color: #45a049;
       }
-      #debug {
-        margin-top: 20px;
-        background: #333;
-        padding: 10px;
-        display: block;
-        white-space: pre-wrap;
-        font-family: monospace;
-        font-size: 12px;
-        max-height: 200px;
-        overflow-y: auto;
-      }
     </style>
   </head>
   <body>
-    <h2>✨ Upwork Feed Oluştur</h2>
+    <h2>✨ Create Upwork Feed</h2>
 
-    <label for="query">Arama Terimi</label>
-    <input type="text" id="query" placeholder="örn. python, react" required />
+    <label for="query">Search Term</label>
+    <input type="text" id="query" placeholder="e.g. python, react" required />
 
-    <label for="experience">Deneyim Seviyesi</label>
+    <label for="experience">Experience Level</label>
     <select id="experience">
-      <option value="Any">Herhangi biri</option>
+      <option value="Any">Any</option>
       <option value="entry_level">Entry Level</option>
       <option value="intermediate">Intermediate</option>
       <option value="expert">Expert</option>
     </select>
 
-    <label for="job_type">İş Türü</label>
+    <label for="job_type">Job Type</label>
     <select id="job_type">
-      <option value="Any">Herhangi biri</option>
-      <option value="hourly">Saatlik</option>
-      <option value="fixed-price">Sabit Fiyat</option>
+      <option value="Any">Any</option>
+      <option value="hourly">Hourly</option>
+      <option value="fixed-price">Fixed Price</option>
     </select>
 
-    <label for="rate_min">Minimum Saatlik Ücret</label>
-    <input type="number" id="rate_min" placeholder="örn. 20" />
+    <label for="rate_min">Minimum Hourly Rate</label>
+    <input type="number" id="rate_min" placeholder="e.g. 20" />
 
-    <label for="rate_max">Maksimum Saatlik Ücret</label>
-    <input type="number" id="rate_max" placeholder="örn. 100" />
+    <label for="rate_max">Maximum Hourly Rate</label>
+    <input type="number" id="rate_max" placeholder="e.g. 100" />
 
-    <label for="duration">Proje Süresi</label>
+    <label for="duration">Project Duration</label>
     <select id="duration">
-      <option value="Any">Herhangi biri</option>
-      <option value="week">1 haftadan az</option>
-      <option value="month">1-3 ay</option>
-      <option value="ongoing">Sürekli</option>
+      <option value="Any">Any</option>
+      <option value="week">Less than a week</option>
+      <option value="month">1–3 months</option>
+      <option value="ongoing">Ongoing</option>
     </select>
 
-    <label for="workload">İş Yükü</label>
+    <label for="workload">Workload</label>
     <select id="workload">
-      <option value="Any">Herhangi biri</option>
-      <option value="as_needed">30 saat/haftadan az</option>
-      <option value="full_time">30 saat/haftadan fazla</option>
+      <option value="Any">Any</option>
+      <option value="as_needed">Less than 30 hrs/week</option>
+      <option value="full_time">More than 30 hrs/week</option>
     </select>
 
-    <label for="client_hires">Müşteri İşe Alım Geçmişi</label>
+    <label for="client_hires">Client Hire History</label>
     <select id="client_hires">
-      <option value="Any">Herhangi biri</option>
-      <option value="0">Hiç işe alım yok</option>
-      <option value="1-9">1-9 işe alım</option>
-      <option value="10plus">10+ işe alım</option>
+      <option value="Any">Any</option>
+      <option value="0">No hires</option>
+      <option value="1-9">1–9 hires</option>
+      <option value="10plus">10+ hires</option>
     </select>
 
-    <label for="contract_to_hire">Sözleşmeden İşe Alıma</label>
+    <label for="contract_to_hire">Contract-to-Hire</label>
     <select id="contract_to_hire">
-      <option value="Any">Herhangi biri</option>
-      <option value="true">Evet</option>
-      <option value="false">Hayır</option>
+      <option value="Any">Any</option>
+      <option value="true">Yes</option>
+      <option value="false">No</option>
     </select>
 
-    <button class="submit" onclick="submitForm()">✨ Feed Kaydet</button>
-
-    <div id="debug">Debugging bilgileri burada görünecek...</div>
+    <button class="submit" onclick="submitForm()">✨ Save Feed</button>
 
     <script>
       let tg = window.Telegram.WebApp;
       tg.expand();
       tg.ready();
 
-      const debug = document.getElementById("debug");
-
-      function showDebug(msg) {
-        let now = new Date().toISOString().substring(11, 19);
-        debug.innerHTML += `[${now}] ${msg}\n`;
-        debug.scrollTop = debug.scrollHeight;
-      }
-
-      showDebug("Telegram WebApp Bilgileri:");
-      showDebug(`Platform: ${tg.platform}`);
-      showDebug(`Version: ${tg.version}`);
-      showDebug(`InitData: ${tg.initData ? "Mevcut" : "Yok"}`);
-      showDebug(`ColorScheme: ${tg.colorScheme}`);
-
-      // Telegram initData'dan kullanıcı bilgilerini almaya çalış
       let telegramUserId = null;
       try {
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
           telegramUserId = tg.initDataUnsafe.user.id;
-          showDebug(`Telegram Kullanıcı ID: ${telegramUserId}`);
-        } else {
-          showDebug("UYARI: Telegram kullanıcı ID'si alınamadı");
         }
-      } catch (e) {
-        showDebug(`Telegram kullanıcı ID hatası: ${e.message}`);
-      }
-
-      document.addEventListener("DOMContentLoaded", function () {
-        showDebug("Sayfa yüklendi, form elemanları kontrol ediliyor...");
-        const formElements = [
-          "query",
-          "experience",
-          "job_type",
-          "rate_min",
-          "rate_max",
-          "duration",
-          "workload",
-          "client_hires",
-          "contract_to_hire",
-        ];
-        formElements.forEach((id) => {
-          const element = document.getElementById(id);
-          if (element) {
-            showDebug(`Element bulundu: ${id}`);
-          } else {
-            showDebug(`HATA: Element bulunamadı: ${id}`);
-          }
-        });
-      });
+      } catch (e) {}
 
       function submitForm() {
-        showDebug("submitForm() çağrıldı");
-
         const queryInput = document.getElementById("query");
         const rawQuery = queryInput ? queryInput.value.trim() : "";
-        showDebug(`Ham sorgu: "${rawQuery}"`);
 
         if (!rawQuery) {
-          showDebug("HATA: Arama terimi boş!");
-          alert("Lütfen en az bir arama terimi girin!");
+          alert("Please enter at least one search term!");
           return;
         }
 
         try {
-          // Kullanıcı ID'sini kontrol et
           if (!telegramUserId) {
-            // Telegram ID yoksa test için manuel bir ID kullan
-            // NOT: Gerçek uygulamada bu kodu kaldırmanız gerekir
             telegramUserId = prompt(
-              "Telegram kullanıcı ID'nizi girin:",
+              "Enter your Telegram user ID:",
               "12345678"
             );
-            showDebug(`Manuel girilen Telegram ID: ${telegramUserId}`);
           }
 
-          // API'ye gönderilecek veriyi hazırla
           const data = {
             telegram_id: telegramUserId,
             searchTerm: rawQuery,
@@ -222,16 +157,7 @@
             contractToHire: document.getElementById("contract_to_hire").value,
           };
 
-          showDebug(`API'ye gönderilecek veri: ${JSON.stringify(data)}`);
-
-          // API'ye gönder
-          showDebug("API'ye istek gönderiliyor...");
-
-          // Sunucu URL'sini belirle
           const apiUrl = "https://stingray-app-qqhhi.ondigitalocean.app/api/update-filters";
-
-
-          showDebug(`API URL: ${apiUrl}`);
 
           fetch(apiUrl, {
             method: "POST",
@@ -240,47 +166,25 @@
             },
             body: JSON.stringify(data),
           })
-            .then((response) => {
-              showDebug(`API Yanıt Status: ${response.status}`);
-              return response.json();
-            })
+            .then((response) => response.json())
             .then((responseData) => {
-              showDebug(`API Yanıtı: ${JSON.stringify(responseData)}`);
-
               if (responseData.success) {
-                showDebug("✅ Filtreler başarıyla güncellendi");
-                alert(
-                  `Filtreler başarıyla güncellendi: ${responseData.message}`
-                );
-
-                // İşlem başarılı olduğunda Telegram uygulamasını kapat
+                alert(`Filters updated successfully: ${responseData.message}`);
                 setTimeout(() => {
-                  showDebug("WebApp kapatılıyor...");
                   tg.close();
                 }, 2000);
               } else {
-                showDebug(`❌ API Hatası: ${responseData.message}`);
-                alert(`Hata: ${responseData.message}`);
+                alert(`Error: ${responseData.message}`);
               }
             })
             .catch((error) => {
-              showDebug(`❌ Fetch hatası: ${error.message}`);
-              alert(`API bağlantı hatası: ${error.message}`);
-
-              // Hata durumunda alternatif olarak Telegram'a gönder
+              alert(`API connection error: ${error.message}`);
               try {
-                showDebug("Alternatif olarak Telegram sendData deneniyor...");
                 tg.sendData(JSON.stringify(data));
-                showDebug("✅ Veri Telegram'a gönderildi");
-              } catch (telegramError) {
-                showDebug(
-                  `❌ Telegram gönderme hatası: ${telegramError.message}`
-                );
-              }
+              } catch (telegramError) {}
             });
         } catch (error) {
-          showDebug(`❌ Form işleme hatası: ${error.message}`);
-          alert(`Form işlenirken hata oluştu: ${error.message}`);
+          alert(`Error processing form: ${error.message}`);
         }
       }
     </script>
