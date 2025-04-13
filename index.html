@@ -132,16 +132,12 @@
         const rawQuery = queryInput ? queryInput.value.trim() : "";
 
         if (!rawQuery) {
-          alert("Please enter at least one search term!");
-          return;
+          return; // silently fail if no input
         }
 
         try {
           if (!telegramUserId) {
-            telegramUserId = prompt(
-              "Enter your Telegram user ID:",
-              "12345678"
-            );
+            telegramUserId = prompt("Enter your Telegram user ID:", "12345678");
           }
 
           const data = {
@@ -169,22 +165,17 @@
             .then((response) => response.json())
             .then((responseData) => {
               if (responseData.success) {
-                alert(`Filters updated successfully: ${responseData.message}`);
-                setTimeout(() => {
-                  tg.close();
-                }, 2000);
-              } else {
-                alert(`Error: ${responseData.message}`);
+                tg.close(); // close immediately
               }
+              // silently ignore errors
             })
-            .catch((error) => {
-              alert(`API connection error: ${error.message}`);
+            .catch(() => {
               try {
                 tg.sendData(JSON.stringify(data));
-              } catch (telegramError) {}
+              } catch (e) {}
             });
         } catch (error) {
-          alert(`Error processing form: ${error.message}`);
+          // silently fail
         }
       }
     </script>
